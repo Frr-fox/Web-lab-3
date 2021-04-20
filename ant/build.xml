@@ -1,0 +1,75 @@
+<project name="Web-lab-3" default="compile" basedir=".">
+    <property file="./env/build.properties" />
+
+    <path id="classpath">
+        <fileset dir="${src.lib.dir}" includes="*.jar"/>
+        <fileset dir="${main.dir}" includes="*.java"/>
+    </path>
+
+    <path id="classpath.test">
+        <pathelement location="${junit}"/>
+        <pathelement location="${hamcrest}"/>
+        <pathelement location="${classes.dir}"/>
+    </path>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="${main.dir}" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false"/>
+        <echo level="info" message="Files *.java compiled" />
+    </target>
+
+    <target name="build" depends="compile">
+        <copy todir="${war_exploded.dir}" preservelastmodified="true" overwrite="true">
+            <fileset dir="${web.dir}"/>
+        </copy>
+        <copy todir="${lib.dir}" preservelastmodified="true">
+            <fileset dir="${src.lib.dir}" excludes="javax*"/>
+        </copy>
+        <delete file="${build.dir}/Web-lab-3.war"/>
+        <war
+                compress="true"
+                encoding="utf-8"
+                destfile="${build.dir}/Web-lab-3.war"
+                webxml="${web.dir}/WEB-INF/web.xml">
+            <fileset dir="${war_exploded.dir}" />
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </war>
+        <antcall target="music"/>
+        <echo level="info" message="Web-lab-3.war have been built" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <echo level="info" message="The directory ${build.dir} cleaned" />
+    </target>
+
+    <target name="test" depends="build">
+        <mkdir dir="${test.classes.dir}"/>
+        <javac destdir="${test.classes.dir}" srcdir="${test.dir}" includeantruntime="false"
+               classpathref="classpath.test"/>
+        <junit printsummary="on" haltonfailure="yes">
+            <classpath>
+                <path refid="classpath.test"/>
+                <pathelement location="${test.classes.dir}"/>
+            </classpath>
+            <formatter type="plain" usefile="false"/>
+            <batchtest>
+                <fileset dir="${test.dir}" includes="**/*Test*.java"/>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="music">
+        <sound>
+            <success source="${music.success}"/>
+            <fail source="${music.fail}"/>
+        </sound>
+    </target>
+
+    <target name="team">
+
+    </target>
+</project>
