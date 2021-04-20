@@ -249,7 +249,7 @@ a {
 }
 
 a:hover {
-    color: coral;
+    color: darkred;
 }
 
 a.new_request {
@@ -261,7 +261,7 @@ a.new_request {
 }
 
 a.new_request:hover {
-    color: coral;
+    color: darkred;
 }
 
 /*
